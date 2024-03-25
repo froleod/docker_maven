@@ -1,5 +1,5 @@
 FROM maven:latest
 
-COPY . .
+COPY Dockerfile /usr/src/app/
 
-RUN mvn clean package
+WORKDIR /usr/src/app
