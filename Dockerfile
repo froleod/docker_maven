@@ -5,9 +5,6 @@ FROM maven:3.8.3-openjdk-17 AS build
 COPY ./ /app
 WORKDIR /app
 
-# Устанавливаем wget и git, необходимые для установки зависимостей Maven
-RUN apt-get update && apt-get install -y wget git
-
 # Собираем приложение с помощью Maven
 RUN mvn clean package
 
