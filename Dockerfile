@@ -1,18 +1,17 @@
-# Используем образ с JDK и Maven для сборки приложения
-FROM maven:3.8.3-openjdk-17 AS build
+FROM openjdk:11
 
-# Копируем исходный код приложения в рабочую директорию контейнера
-COPY ./ /app
-WORKDIR /app
+ENV MAVEN_HOME /usr/share/maven
+ENV MAVEN_VERSION 3.8.2
+ENV PATH $MAVEN_HOME/bin:$PATH
 
-# Собираем приложение с помощью Maven
-RUN mvn clean package
+RUN apt-get update \
+    && apt-get install -y maven \
+    && rm -rf /var/lib/apt/lists/*
 
-# Используем образ с JRE для запуска приложения
-FROM openjdk:17-slim AS runtime
+COPY . /usr/src/app
 
-# Копируем собранный JAR-файл из предыдущего образа в текущий
-COPY --from=build /app/target/myapp.jar /app/myapp.jar
+WORKDIR /usr/src/app
 
-# Устанавливаем команду для запуска приложения
-CMD ["java", "-jar", "/app/myapp.jar"]
+RUN mvn clean install
+
+CMD ["java", "-jar", "target/myapp.jar"]
